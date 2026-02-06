@@ -1,7 +1,15 @@
 import express from "express";
+import "../config/config.service.js";
+import ConnectDB from "./DB/config/db.connection.js";
+import userRouter from "./modules/userModule/user.controller.js";
+import router from "./modules/notesModule/notes.controller.js";
 const Bootstrap = async () => {
   const app = express();
-  const PORT = 3000;
+  app.use(express.json());
+  await ConnectDB();
+
+  app.use("/user", userRouter);
+  app.use("/notes", router);
 
   //invalid routing
   app.use("{/dummy}", (req, res) => {
@@ -14,6 +22,8 @@ const Bootstrap = async () => {
       message: "somthing went wrong " + error.message,
     });
   });
-  app.listen(PORT, () => console.log("app running "));
+  app.listen(process.env.PORT, () =>
+    console.log("app running on port " + process.env.PORT),
+  );
 };
 export default Bootstrap;
